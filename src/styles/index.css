@@ -17,7 +17,7 @@ code {
 
 .DNAseq {
   background-color: rgb(236, 255, 249);
-  /*word-wrap: break-word;*/
+  word-wrap: break-word;
 }
 
 .DNAletter:hover {

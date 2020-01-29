@@ -1,6 +1,6 @@
 import React from 'react';
 
-class Seqedit extends React.Component {
+class Seq extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -9,7 +9,7 @@ class Seqedit extends React.Component {
             ComplementView: this.props.ComplementView
         }
     }
-    getComplement(base) {
+    getComplement = (base) => {
         if (base == 'a') { return 't'; }
         else if (base == 't') { return 'a'; }
         else if (base == 'c') { return 'g'; }

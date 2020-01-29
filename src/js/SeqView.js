@@ -4,7 +4,6 @@ import Seq from './Seq'
 class seqView extends React.Component {
     constructor() {
         super();
-        this.seqref = React.createRef();
         this.state = {
             seqs: 0,
             DNAseqs: [],
@@ -12,11 +11,13 @@ class seqView extends React.Component {
             ComplementView: false
         }
     }
+    //To do: implement uploading a file from local to host
     openLocalFile = () => {
         this.setState({
             seqs: this.state.seqs + 1
         })
     }
+    //Print the loaded DNA sequences
     printSeqs = () => {
         let seqArray = [];
         for (let i = 0; i < this.state.seqs; i++) {
@@ -46,11 +47,13 @@ class seqView extends React.Component {
             </div>
         )
     }
+    //Toggle to show or not DNA complementary strand
     toggleComplementView = () => {
         this.setState({
             ComplementView: !this.state.ComplementView
         })
     }
+    //Toggle tabbing enabled/disabled
     toggleTabbedView = () => {
         this.setState({
             TabbedView: !this.state.TabbedView
