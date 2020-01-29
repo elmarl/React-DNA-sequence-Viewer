@@ -87,13 +87,6 @@ class Seq extends React.Component {
 
         return newtext;
     }
-    /*toggleTabbedView = () => {
-        let copyTabbedView = !this.state.TabbedView;
-        this.setState({
-            TabbedView: copyTabbedView
-        })
-        
-    }*/
     generateRowHeader = () => {
         let rowCount = Math.ceil(this.state.dnaSeq.length / 100)
         let rowHeader = [];
@@ -129,4 +122,3 @@ class Seq extends React.Component {
 }
 
 export default Seq;
-//ReactDOM.render(<App />, document.getElementById('root'));

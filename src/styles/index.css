@@ -17,7 +17,10 @@ code {
 
 .DNAseq {
   background-color: rgb(236, 255, 249);
-  word-wrap: break-word;
+}
+
+td {
+  margin-bottom: -5000px; padding-bottom: 5000px;
 }
 
 .DNAletter:hover {
@@ -35,4 +38,8 @@ ul {
 
 li {
   display: inline;
+}
+
+div{
+  white-space:nowrap;
 }
