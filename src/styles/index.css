@@ -16,9 +16,23 @@ code {
 } 
 
 .DNAseq {
-  background-color: rgb(214, 255, 241);
-  word-wrap: break-word;
+  background-color: rgb(236, 255, 249);
+  /*word-wrap: break-word;*/
 }
+
 .DNAletter:hover {
   background-color: cadetblue;
+}
+
+.Complement {
+  background-color: rgb(255, 230, 221);
+}
+
+ul {
+  margin: auto;
+  list-style-type: none;
+}
+
+li {
+  display: inline;
 }
