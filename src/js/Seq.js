@@ -1,6 +1,6 @@
 import React from 'react';
 
-class Seqedit extends React.Component {
+class Seq extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
