@@ -4,11 +4,11 @@ This is a DNA sequence viewing tool. It enables to load DNA sequences and displa
 such as tabbed or as a continuous line and whether or not to show the complementary strand. Each base
 is interactive and lights up with mouse hover.
 
-Features to add:
-Upload a DNA file from local
-Edit each base
-Remove a sequence from view
-Save the sequence(s)
+Features to add:<br />
+Upload a DNA file from local<br />
+Edit each base<br />
+Remove a sequence from view<br />
+Save the sequence(s)<br />
 
 ## Available Scripts
 
