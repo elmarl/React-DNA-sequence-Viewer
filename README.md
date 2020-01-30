@@ -7,7 +7,6 @@ is interactive and lights up with mouse hover.
 Features to add:<br />
 Upload a DNA file from local<br />
 Edit each base<br />
-Remove a sequence from view<br />
 Save the sequence(s)<br />
 
 ## Available Scripts
