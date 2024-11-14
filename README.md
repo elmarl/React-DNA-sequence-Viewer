@@ -2,7 +2,7 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 
 This is a DNA sequence viewing tool. It enables to load DNA sequences and display it in different views
 such as tabbed or as a continuous line and whether or not to show the complementary strand. Each base
-is rendered as a <span> to be interactive and light up with mouse hover.
+is rendered as a \<span\> to be interactive and light up with mouse hover.
 
 # Running
 
