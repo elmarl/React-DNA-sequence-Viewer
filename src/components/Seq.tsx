@@ -1,10 +1,19 @@
 import React from "react";
+import styles from "../styles/Seq.module.css";
+import { Nucleotide } from "../types/nucleotide";
 
 interface SeqProps {
   DNAseq: string;
   TabbedView: boolean;
   ComplementView: boolean;
 }
+
+const nucleotideClassMap: Record<Nucleotide, string> = {
+  A: styles.A,
+  T: styles.T,
+  C: styles.C,
+  G: styles.G,
+};
 
 /**
  * Functional component to display a DNA sequence and its complement.
@@ -37,112 +46,130 @@ const Seq: React.FC<SeqProps> = React.memo(
     };
 
     /**
-     * Adds a DNA base and its complement (if enabled) to the respective arrays.
+     * Splits an array into smaller chunks of a specified size.
      *
-     * @param {string} char - The DNA base character.
-     * @param {number} index - The current index in the DNA sequence.
-     * @param {JSX.Element[]} newText - The array holding main DNA sequence elements.
-     * @param {JSX.Element[]} complementArray - The array holding complement sequence elements.
+     * @param {string} array - The string to be split into chunks.
+     * @param {number} size - The size of each chunk.
      */
-    const addBase = (
-      char: string,
-      index: number,
-      newText: JSX.Element[],
-      complementArray: JSX.Element[]
-    ): void => {
-      const base = char.toUpperCase();
-      newText.push(
-        <span
-          key={`base-${index}`}
-          className={`DNAletter ${base}`}
-          aria-label={`Base ${index + 1}: ${base}`}
-        >
-          {base}
-        </span>
-      );
-      if (ComplementView) {
-        complementArray.push(
-          <span
-            key={`comp-${index}`}
-            className={`DNAletter Complement ${base}`}
-            aria-label={`Complement of base ${index + 1}: ${getComplement(
-              base
-            )}`}
-          >
-            {getComplement(base)}
-          </span>
-        );
+    const chunkArray = (array: string, size: number): string[] => {
+      const result: string[] = [];
+      for (let i = 0; i < array.length; i += size) {
+        result.push(array.slice(i, i + size));
       }
+      return result;
     };
 
     /**
      * Transforms the DNA sequence string into an array of JSX elements with appropriate formatting.
      *
-     * @param {string} text - The DNA sequence string.
-     * @returns {JSX.Element[]} An array of JSX elements representing the formatted DNA sequence.
+     * @param {string} sequence - The DNA sequence string.
      */
-    const transformDNAseqToHtml = (text: string): JSX.Element[] => {
-      const newText: JSX.Element[] = [];
-      let complementArray: JSX.Element[] = [];
+    const transformDNAseqToHtml = (sequence: string): JSX.Element[] => {
+      const elements: JSX.Element[] = [];
+      const lines = chunkArray(sequence, 100); // Split into lines of 100 bases
 
-      for (let i = 0; i < text.length; i++) {
-        const char = text.charAt(i);
-        if (TabbedView && i % 10 === 0 && i % 100 !== 0) {
-          // Add tabbing to main sequence
-          newText.push(
-            <span key={`tab-${i}`} className={"tab"} aria-hidden="true"></span>
-          );
-          addBase(char, i, newText, complementArray);
+      lines.forEach((line, lineIndex) => {
+        // Split line into chunks of 10 bases if TabbedView is enabled
+        const chunks = TabbedView ? chunkArray(line, 10) : [line];
 
-          // Add tabbing to complement sequence
-          if (ComplementView) {
-            complementArray.push(
+        chunks.forEach((chunk, chunkIndex) => {
+          // Insert tab before the chunk if it's not the first chunk in the line
+          if (TabbedView && chunkIndex > 0) {
+            elements.push(
               <span
-                key={`comp-tab-${i}`}
-                className={"tab"}
+                key={`tab-${lineIndex}-${chunkIndex}`}
+                className={styles.tab}
                 aria-hidden="true"
               ></span>
             );
           }
-        } else if (i % 100 === 0 && i !== 0) {
-          // Add line break to main sequence
-          newText.push(<br key={`br-${i}`} />);
-          if (ComplementView) {
-            // Add complement sequence and line breaks
-            newText.push(
+
+          // Map each base in the chunk to a <span>
+          const baseElements = chunk.split("").map((base, baseIndex) => {
+            const globalBaseIndex =
+              lineIndex * 100 + chunkIndex * 10 + baseIndex;
+            const upperBase = base.toUpperCase() as Nucleotide;
+            return (
               <span
-                key={`comp-line-${i}`}
-                aria-label={`Complement sequence line ${i / 100}`}
+                key={`base-${globalBaseIndex}`}
+                className={`${styles.DNAletter} ${nucleotideClassMap[upperBase]}`}
+                data-base={base.toUpperCase()}
+                aria-label={`Base ${
+                  globalBaseIndex + 1
+                }: ${base.toUpperCase()}`}
               >
-                {complementArray}
+                {base.toUpperCase()}
               </span>
             );
-            newText.push(<br key={`br-comp-${i}`} />);
-            newText.push(<br key={`br-comp2-${i}`} />);
-            complementArray = []; // Clear the array
-            addBase(char, i, newText, complementArray);
-          } else {
-            addBase(char, i, newText, complementArray);
-          }
-        } else {
-          addBase(char, i, newText, complementArray);
-          if (i === text.length - 1) {
-            newText.push(<br key={`end-br-${i}`} />);
-            if (ComplementView) {
-              newText.push(
+          });
+
+          elements.push(...baseElements);
+        });
+
+        // Add a line break after each line
+        elements.push(<br key={`br-${lineIndex}`} />);
+
+        // If ComplementView is enabled, generate and append the complementary sequence
+        if (ComplementView) {
+          const complementSequence = sequence
+            .slice(lineIndex * 100, lineIndex * 100 + 100)
+            .split("")
+            .map((base) => getComplement(base));
+
+          const complementChunks = TabbedView
+            ? chunkArray(complementSequence.join(""), 10)
+            : [complementSequence.join("")];
+
+          // Optionally insert tabs in the complement sequence
+          const complementElements: JSX.Element[] = [];
+          complementChunks.forEach((chunk, chunkIndex) => {
+            if (TabbedView && chunkIndex > 0) {
+              complementElements.push(
                 <span
-                  key={`comp-end-${i}`}
-                  aria-label="Final complement sequence"
-                >
-                  {complementArray}
-                </span>
+                  key={`comp-tab-${lineIndex}-${chunkIndex}`}
+                  className={styles.tab}
+                  aria-hidden="true"
+                ></span>
               );
             }
-          }
-        }
-      }
 
-      return newText;
+            const compBaseElements = chunk
+              .split("")
+              .map((compBase, compBaseIndex) => {
+                const globalCompIndex =
+                  lineIndex * 100 + chunkIndex * 10 + compBaseIndex;
+                const upperBase = compBase.toUpperCase() as Nucleotide;
+                return (
+                  <span
+                    key={`comp-base-${globalCompIndex}`}
+                    className={`${styles.DNAletter} ${styles.Complement} ${nucleotideClassMap[upperBase]}`}
+                    data-base={compBase}
+                    aria-label={`Complement of base ${
+                      globalCompIndex + 1
+                    }: ${compBase}`}
+                  >
+                    {compBase}
+                  </span>
+                );
+              });
+
+            complementElements.push(...compBaseElements);
+          });
+
+          elements.push(
+            <span
+              key={`comp-line-${lineIndex}`}
+              aria-label={`Complement sequence line ${lineIndex + 1}`}
+            >
+              {complementElements}
+            </span>
+          );
+          elements.push(<br key={`br-comp-${lineIndex}`} />);
+          elements.push(<br key={`br-comp2-${lineIndex}`} />);
+        }
+      });
+
+      return elements;
     };
 
     /**
@@ -161,8 +188,8 @@ const Seq: React.FC<SeqProps> = React.memo(
         );
         rowHeader.push(<br key={`br-header-${i}`} />);
         if (ComplementView) {
-          rowHeader.push(<br key={`br-header2-${i}`} />);
-          rowHeader.push(<br key={`br-header3-${i}`} />);
+          rowHeader.push(<br key={`br-header-${i}`} />);
+          rowHeader.push(<br key={`br-header-complement-${i}`} />);
         }
       }
 
@@ -176,8 +203,8 @@ const Seq: React.FC<SeqProps> = React.memo(
 
     return (
       <div>
-        <span className="rowHeader">{generateRowHeader()}</span>
-        <span className="DNAseq">{renderedSequence}</span>
+        <span className={styles.rowHeader}>{generateRowHeader()}</span>
+        <span className={styles.DNAseq}>{renderedSequence}</span>
       </div>
     );
   }

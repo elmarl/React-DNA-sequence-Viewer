@@ -1,0 +1,27 @@
+
+  .tab {
+    display: inline-block;
+    width: 2em;
+  }
+  
+  .rowHeader {
+    background-color: antiquewhite;
+    float: left;
+  } 
+  
+  .DNAseq {
+    background-color: rgb(236, 255, 249);
+  }
+  
+  .DNAletter {
+    font-family: monospace;
+  }
+  
+  .DNAletter.A:hover { color: red; }
+  .DNAletter.T:hover { color: green; }
+  .DNAletter.C:hover { color: blue; }
+  .DNAletter.G:hover { color: orange; }
+  
+  .Complement {
+    background-color: rgb(255, 230, 221);
+  }

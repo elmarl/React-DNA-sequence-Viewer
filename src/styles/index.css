@@ -5,41 +5,6 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-.tab {
-  display: inline-block;
-  width: 2em;
-}
-
-.rowHeader {
-  background-color: antiquewhite;
-  float: left;
-} 
-
-.DNAseq {
-  background-color: rgb(236, 255, 249);
-}
-
-td {
-  margin-bottom: -5000px; padding-bottom: 5000px;
-}
-
-.DNAletter {
-  font-family: monospace;
-}
-
-.DNAletter:hover {
-  background-color: rgba(95, 158, 160, 0.1)
-}
-
-.DNAletter.A:hover { color: red; }
-.DNAletter.T:hover { color: green; }
-.DNAletter.C:hover { color: blue; }
-.DNAletter.G:hover { color: orange; }
-
-.Complement {
-  background-color: rgb(255, 230, 221);
-}
-
 .seq-container {
   margin-bottom: 1em;
 }
