@@ -1,15 +1,17 @@
-import React, { useState } from "react";
-import Seq from "./Seq";
+// SeqView.tsx
+import React, { useState, useRef, ChangeEvent } from "react";
+import Seq from "./components/Seq";
 
 /**
  * Functional component to manage and display multiple DNA sequences.
  *
  * @returns {JSX.Element} The rendered DNA sequence view component.
  */
-const SeqView = () => {
-  const [DNAseqs, setDNAseqs] = useState([]);
-  const [TabbedView, setTabbedView] = useState(false);
-  const [ComplementView, setComplementView] = useState(false);
+const SeqView: React.FC = () => {
+  const [DNAseqs, setDNAseqs] = useState<string[]>([]);
+  const [TabbedView, setTabbedView] = useState<boolean>(false);
+  const [ComplementView, setComplementView] = useState<boolean>(false);
+  const requestIDRef = useRef<HTMLInputElement>(null);
 
   /**
    * Generates a random DNA sequence composed of 'A', 'C', 'G', and 'T'.
@@ -17,7 +19,7 @@ const SeqView = () => {
    * @param {number} [length=500] - The length of the DNA sequence to generate.
    * @returns {string} The generated DNA sequence.
    */
-  const makeId = (length = 500) => {
+  const makeId = (length: number = 500): string => {
     const characters = "ACGT";
     let result = "";
     for (let i = 0; i < length; i++) {
@@ -31,7 +33,7 @@ const SeqView = () => {
   /**
    * Adds a randomly generated DNA sequence to the state.
    */
-  const addRandomSeq = () => {
+  const addRandomSeq = (): void => {
     setDNAseqs((prevSeqs) => [...prevSeqs, makeId()]);
   };
 
@@ -40,7 +42,7 @@ const SeqView = () => {
    *
    * @param {string} seq - The DNA sequence to add.
    */
-  const addRequestedSeq = (seq) => {
+  const addRequestedSeq = (seq: string): void => {
     setDNAseqs((prevSeqs) => [...prevSeqs, seq]);
   };
 
@@ -49,7 +51,7 @@ const SeqView = () => {
    *
    * @param {number} index - The index of the DNA sequence to remove.
    */
-  const removeSeq = (index) => {
+  const removeSeq = (index: number): void => {
     setDNAseqs((prevSeqs) =>
       prevSeqs.filter((_, seqIndex) => seqIndex !== index)
     );
@@ -60,7 +62,7 @@ const SeqView = () => {
    *
    * @returns {Array<JSX.Element>} An array of JSX elements representing the DNA sequences and controls.
    */
-  const printSeqs = () => {
+  const printSeqs = (): JSX.Element[] => {
     return DNAseqs.map((seq, index) => (
       <div key={`seq-container-${index}`}>
         <Seq
@@ -78,8 +80,8 @@ const SeqView = () => {
   /**
    * Fetches a DNA sequence from the NCBI API based on the input sequence ID.
    */
-  const requestSeq = async () => {
-    const term = document.getElementById("requestID").value.trim();
+  const requestSeq = async (): Promise<void> => {
+    const term = requestIDRef.current?.value.trim();
     if (!term) {
       alert("Please enter a valid sequence ID.");
       return;
@@ -117,29 +119,44 @@ const SeqView = () => {
   };
 
   /**
-   * Toggles the TabbedView state to enable or disable tabbed formatting.
+   * Handles changes to the TabbedView checkbox.
+   *
+   * @param {ChangeEvent<HTMLInputElement>} event - The change event.
    */
-  const toggleTabbedView = () => {
-    setTabbedView((prev) => !prev);
+  const handleTabbedViewChange = (
+    event: ChangeEvent<HTMLInputElement>
+  ): void => {
+    setTabbedView(event.target.checked);
   };
 
   /**
-   * Toggles the ComplementView state to show or hide the complementary DNA sequence.
+   * Handles changes to the ComplementView checkbox.
+   *
+   * @param {ChangeEvent<HTMLInputElement>} event - The change event.
    */
-  const toggleComplementView = () => {
-    setComplementView((prev) => !prev);
+  const handleComplementViewChange = (
+    event: ChangeEvent<HTMLInputElement>
+  ): void => {
+    setComplementView(event.target.checked);
   };
 
   return (
     <div>
       <ul>
         <li>
-          <label>Add random seq:</label>
-          <button onClick={addRandomSeq}>Generate</button>
+          <label htmlFor="generate-button">Add random seq:</label>
+          <button id="generate-button" onClick={addRandomSeq}>
+            Generate
+          </button>
         </li>
         <li>
           <label htmlFor="requestID">Search by sequence ID:</label>
-          <input id="requestID" type="text" defaultValue="NM_024530" />
+          <input
+            id="requestID"
+            type="text"
+            defaultValue="NM_024530"
+            ref={requestIDRef}
+          />
           <button onClick={requestSeq}>Load Seq</button>
         </li>
         <li>
@@ -147,7 +164,7 @@ const SeqView = () => {
           <input
             type="checkbox"
             checked={TabbedView}
-            onChange={toggleTabbedView}
+            onChange={handleTabbedViewChange}
           />
         </li>
         <li>
@@ -155,7 +172,7 @@ const SeqView = () => {
           <input
             type="checkbox"
             checked={ComplementView}
-            onChange={toggleComplementView}
+            onChange={handleComplementViewChange}
           />
         </li>
       </ul>
