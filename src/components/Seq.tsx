@@ -190,8 +190,8 @@ const Seq: React.FC<SeqProps> = React.memo(
         );
         rowHeader.push(<br key={`br-header-${i}`} />);
         if (ComplementView) {
-          rowHeader.push(<br key={`br-header-${i}`} />);
-          rowHeader.push(<br key={`br-header-complement-${i}`} />);
+          rowHeader.push(<br key={`br-header-cmplmnt-1-${i}`} />);
+          rowHeader.push(<br key={`br-header-cmplmnt-2-${i}`} />);
         }
       }
 
