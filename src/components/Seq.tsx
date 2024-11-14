@@ -80,6 +80,7 @@ const Seq: React.FC<SeqProps> = React.memo(
                 key={`tab-${lineIndex}-${chunkIndex}`}
                 className={styles.tab}
                 aria-hidden="true"
+                data-testid="tab"
               ></span>
             );
           }
@@ -129,6 +130,7 @@ const Seq: React.FC<SeqProps> = React.memo(
                   key={`comp-tab-${lineIndex}-${chunkIndex}`}
                   className={styles.tab}
                   aria-hidden="true"
+                  data-testid="tab"
                 ></span>
               );
             }
@@ -202,7 +204,7 @@ const Seq: React.FC<SeqProps> = React.memo(
     );
 
     return (
-      <div>
+      <div data-testid="dna-sequence">
         <span className={styles.rowHeader}>{generateRowHeader()}</span>
         <span className={styles.DNAseq}>{renderedSequence}</span>
       </div>
