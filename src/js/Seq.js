@@ -1,113 +1,125 @@
-import React from 'react';
+import React from "react";
+/**
+ * Functional component to display a DNA sequence and its complement.
+ *
+ * @param {Object} props
+ * @param {string} props.DNAseq - The DNA sequence to display.
+ * @param {boolean} props.TabbedView - Flag to enable tabbed view after every 10 bases.
+ * @param {boolean} props.ComplementView - Flag to display the complementary DNA sequence.
+ * @returns {JSX.Element} The rendered DNA sequence component.
+ */
+const Seq = ({ DNAseq, TabbedView, ComplementView }) => {
+  /**
+   * Returns the complementary base for a given DNA base.
+   *
+   * @param {string} base - The DNA base ('A', 'T', 'C', 'G').
+   * @returns {string} The complementary base.
+   */
+  const getComplement = (base) => {
+    switch (base) {
+      case "A":
+        return "T";
+      case "T":
+        return "A";
+      case "C":
+        return "G";
+      case "G":
+        return "C";
+      default:
+        return base;
+    }
+  };
 
-class Seq extends React.Component {
-    getComplement = (base) => {
-        if (base === 'A') { return 'T'; }
-        else if (base === 'T') { return 'A'; }
-        else if (base === 'C') { return 'G'; }
-        else { return 'G'; }
-    }
-    transformDNAseqToHtml = (text) => {
-        let newtext = [];
-        let complementArray = [];
-        let base;
-        //if tabbed view enabled, add a tab after every 10 bases
-        if (this.props.TabbedView) {
-            for (let i = 0; i < text.length; i++) {
-                //check if 10 bases passed, but dont add tab to end of line
-                if (i % 10 === 0 && i % 100 !== 0) {
-                    newtext.push(<span>&nbsp;&nbsp;&nbsp;&nbsp;</span>)
-                    newtext.push(<span className="DNAletter">{base = text.charAt(i).toUpperCase()}</span>)
-                    if (this.props.ComplementView) {
-                        complementArray.push(<span>&nbsp;&nbsp;&nbsp;&nbsp;</span>)
-                        complementArray.push(<span className="DNAletter Complement">{this.getComplement(base)}</span>)
-                    }
-                    //print 100 bases per line, break row after
-                } else if (i % 100 === 0 && i !== 0) {
-                    newtext.push(<br></br>)
-                    if (this.props.ComplementView) {
-                        newtext.push(complementArray)
-                        newtext.push(<br></br>)
-                        newtext.push(<br></br>)
-                        complementArray = [];
-                        newtext.push(<span className="DNAletter">{base = text.charAt(i).toUpperCase()}</span>)
-                        complementArray.push(<span className="DNAletter Complement">{this.getComplement(base)}</span>)
-                    } else {
-                        newtext.push(<span className="DNAletter">{text.charAt(i).toUpperCase()}</span>)
-                    }
-                    //when in middle of word, no tabbing or row break required
-                } else {
-                    newtext.push(<span className="DNAletter">{base = text.charAt(i).toUpperCase()}</span>)
-                    if (this.props.ComplementView) {
-                        complementArray.push(<span className="DNAletter Complement">{this.getComplement(base)}</span>)
-                    }
-                    if (i === text.length - 1) {
-                        newtext.push(<br></br>)
-                        newtext.push(complementArray)
-                    }
-                }
-            }
-            //no tabbing enabled, don't add tabs every 10 bases
-            //new block to avoid bool logic every 10 characters
-        } else {
-            for (let i = 0; i < text.length; i++) {
-                if (i % 100 === 0 && i !== 0) {
-                    newtext.push(<br></br>)
-                    if (this.props.ComplementView) {
-                        newtext.push(complementArray)
-                        newtext.push(<br></br>)
-                        newtext.push(<br></br>)
-                        complementArray = [];
-                        newtext.push(<span className="DNAletter">{base = text.charAt(i).toUpperCase()}</span>)
-                        complementArray.push(<span className="DNAletter Complement">{this.getComplement(base)}</span>)
-                    } else {
-                        newtext.push(<span className="DNAletter">{text.charAt(i).toUpperCase()}</span>)
-                    }
-                } else {
-                    newtext.push(<span className="DNAletter">{base = text.charAt(i).toUpperCase()}</span>)
-                    if (this.props.ComplementView) {
-                        complementArray.push(<span className="DNAletter Complement">{this.getComplement(base).toUpperCase()}</span>)
-                    }
-                    if (i === text.length - 1) {
-                        newtext.push(<br></br>)
-                        newtext.push(complementArray)
-                    }
-                }
-            }
-        }
-        return newtext;
-    }
-    generateRowHeader = () => {
-        let rowCount = Math.ceil(this.props.DNAseq.length / 100)
-        let rowHeader = [];
-        //Generete row header when complementary DNA view enabled
-        if (this.props.ComplementView) {
-            for (let i = 0; i < rowCount; i++) {
-                rowHeader.push(<span>{(i * 100 + 1)}:&nbsp;</span>);
-                rowHeader.push(<br></br>);
-                rowHeader.push(<br></br>);
-                rowHeader.push(<br></br>);
-                if (i === rowCount - 1) {
-                    rowHeader.pop();
-                }
-            }
-            //Generate row header when complementary DNA view disabled
-        } else {
-            for (let i = 0; i < rowCount; i++) {
-                rowHeader.push(<span>{(i * 100 + 1)}:&nbsp;</span>);
-                rowHeader.push(<br></br>);
-            }
-        }
-        return rowHeader;
-    }
-    render = () => {
-        return (
-            <div>
-                <span className="rowHeader">{this.generateRowHeader()}</span>
-                <span className="DNAseq">{this.transformDNAseqToHtml(this.props.DNAseq)}</span>
-            </div>
+  /**
+   * Transforms the DNA sequence string into an array of JSX elements with appropriate formatting.
+   *
+   * @param {string} text - The DNA sequence string.
+   * @returns {Array<JSX.Element>} An array of JSX elements representing the formatted DNA sequence.
+   */
+  const transformDNAseqToHtml = (text) => {
+    const newText = [];
+    const complementArray = [];
+    let base;
+
+    /**
+     * Adds a DNA base and its complement (if enabled) to the respective arrays.
+     *
+     * @param {string} char - The DNA base character.
+     * @param {number} index - The current index in the DNA sequence.
+     */
+    const addBase = (char, index) => {
+      base = char.toUpperCase();
+      newText.push(
+        <span key={`base-${index}`} className="DNAletter">
+          {base}
+        </span>
+      );
+      if (ComplementView) {
+        complementArray.push(
+          <span key={`comp-${index}`} className="DNAletter Complement">
+            {getComplement(base)}
+          </span>
         );
+      }
+    };
+
+    for (let i = 0; i < text.length; i++) {
+      const char = text.charAt(i);
+      if (TabbedView && i % 10 === 0 && i % 100 !== 0) {
+        newText.push(<span key={`tab-${i}`}>&nbsp;&nbsp;&nbsp;&nbsp;</span>);
+        addBase(char, i);
+      } else if (i % 100 === 0 && i !== 0) {
+        newText.push(<br key={`br-${i}`} />);
+        if (ComplementView) {
+          newText.push(<span key={`comp-line-${i}`}>{complementArray}</span>);
+          newText.push(<br key={`br-comp-${i}`} />);
+          newText.push(<br key={`br-comp2-${i}`} />);
+          complementArray.length = 0; // Clear the array
+          addBase(char, i);
+        } else {
+          addBase(char, i);
+        }
+      } else {
+        addBase(char, i);
+        if (i === text.length - 1) {
+          newText.push(<br key={`end-br-${i}`} />);
+          if (ComplementView) {
+            newText.push(<span key={`comp-end-${i}`}>{complementArray}</span>);
+          }
+        }
+      }
     }
-}
+
+    return newText;
+  };
+
+  /**
+   * Generates row headers for the DNA sequence display.
+   *
+   * @returns {Array<JSX.Element>} An array of JSX elements representing the row headers.
+   */
+  const generateRowHeader = () => {
+    const rowCount = Math.ceil(DNAseq.length / 100);
+    const rowHeader = [];
+
+    for (let i = 0; i < rowCount; i++) {
+      rowHeader.push(<span key={`header-${i}`}>{i * 100 + 1}:&nbsp;</span>);
+      rowHeader.push(<br key={`br-header-${i}`} />);
+      if (ComplementView) {
+        rowHeader.push(<br key={`br-header2-${i}`} />);
+        rowHeader.push(<br key={`br-header3-${i}`} />);
+      }
+    }
+
+    return rowHeader;
+  };
+
+  return (
+    <div>
+      <span className="rowHeader">{generateRowHeader()}</span>
+      <span className="DNAseq">{transformDNAseqToHtml(DNAseq)}</span>
+    </div>
+  );
+};
 
 export default Seq;
