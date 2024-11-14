@@ -185,7 +185,7 @@ const Seq: React.FC<SeqProps> = React.memo(
       for (let i = 0; i < rowCount; i++) {
         rowHeader.push(
           <span key={`header-${i}`} aria-label={`Row ${i + 1}`}>
-            {i * 100 + 1}:&nbsp;
+            {i * 100 + 1}:
           </span>
         );
         rowHeader.push(<br key={`br-header-${i}`} />);

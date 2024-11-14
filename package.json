@@ -14,6 +14,7 @@
     "@types/jest": "^29.5.14",
     "@types/react": "^18.3.12",
     "@types/react-dom": "^18.3.1",
+    "cross-env": "^7.0.3",
     "typed-css-modules": "^0.9.1"
   },
   "scripts": {
@@ -21,6 +22,7 @@
     "build": "react-scripts build",
     "type-css": "npx typed-css-modules src --watch",
     "test": "react-scripts test",
+    "test:coverage": "cross-env CI=true npm test -- --coverage",
     "eject": "react-scripts eject"
   },
   "eslintConfig": {
@@ -36,6 +38,21 @@
       "last 1 chrome version",
       "last 1 firefox version",
       "last 1 safari version"
+    ]
+  },
+  "jest": {
+    "collectCoverageFrom": [
+      "src/**/*.{js,jsx,ts,tsx}"
+    ],
+    "coverageReporters": [
+      "text",
+      "lcov"
+    ],
+    "coveragePathIgnorePatterns": [
+      "/node_modules/",
+      "/src/setupTests.ts",
+      "/src/types/",
+      "\\.d\\.ts$"
     ]
   }
 }
