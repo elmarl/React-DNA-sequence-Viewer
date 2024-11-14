@@ -1,9 +1,5 @@
-// Seq.tsx
 import React from "react";
 
-/**
- * Props for the Seq component.
- */
 interface SeqProps {
   DNAseq: string;
   TabbedView: boolean;
@@ -13,18 +9,16 @@ interface SeqProps {
 /**
  * Functional component to display a DNA sequence and its complement.
  *
- * @param {SeqProps} props - The component props.
+ * @param {SeqProps} props
  * @param {string} props.DNAseq - The DNA sequence to display.
  * @param {boolean} props.TabbedView - Flag to enable tabbed view after every 10 bases.
  * @param {boolean} props.ComplementView - Flag to display the complementary DNA sequence.
- * @returns {JSX.Element} The rendered DNA sequence component.
  */
 const Seq: React.FC<SeqProps> = ({ DNAseq, TabbedView, ComplementView }) => {
   /**
    * Returns the complementary base for a given DNA base.
    *
    * @param {string} base - The DNA base ('A', 'T', 'C', 'G').
-   * @returns {string} The complementary base.
    */
   const getComplement = (base: string): string => {
     switch (base.toUpperCase()) {
@@ -45,7 +39,6 @@ const Seq: React.FC<SeqProps> = ({ DNAseq, TabbedView, ComplementView }) => {
    * Transforms the DNA sequence string into an array of JSX elements with appropriate formatting.
    *
    * @param {string} text - The DNA sequence string.
-   * @returns {Array<JSX.Element>} An array of JSX elements representing the formatted DNA sequence.
    */
   const transformDNAseqToHtml = (text: string): JSX.Element[] => {
     const newText: JSX.Element[] = [];
@@ -56,7 +49,7 @@ const Seq: React.FC<SeqProps> = ({ DNAseq, TabbedView, ComplementView }) => {
      * Adds a DNA base and its complement (if enabled) to the respective arrays.
      *
      * @param {string} char - The DNA base character.
-     * @param {number} index - The current index in the DNA sequence.
+     * @param {number} index
      */
     const addBase = (char: string, index: number): void => {
       base = char.toUpperCase();
@@ -107,7 +100,6 @@ const Seq: React.FC<SeqProps> = ({ DNAseq, TabbedView, ComplementView }) => {
   /**
    * Generates row headers for the DNA sequence display.
    *
-   * @returns {Array<JSX.Element>} An array of JSX elements representing the row headers.
    */
   const generateRowHeader = (): JSX.Element[] => {
     const rowCount = Math.ceil(DNAseq.length / 100);
