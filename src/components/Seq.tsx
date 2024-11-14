@@ -37,62 +37,69 @@ const Seq: React.FC<SeqProps> = React.memo(
     };
 
     /**
+     * Adds a DNA base and its complement (if enabled) to the respective arrays.
+     *
+     * @param {string} char - The DNA base character.
+     * @param {number} index - The current index in the DNA sequence.
+     * @param {JSX.Element[]} newText - The array holding main DNA sequence elements.
+     * @param {JSX.Element[]} complementArray - The array holding complement sequence elements.
+     */
+    const addBase = (
+      char: string,
+      index: number,
+      newText: JSX.Element[],
+      complementArray: JSX.Element[]
+    ): void => {
+      const base = char.toUpperCase();
+      newText.push(
+        <span
+          key={`base-${index}`}
+          className={`DNAletter ${base}`}
+          aria-label={`Base ${index + 1}: ${base}`}
+        >
+          {base}
+        </span>
+      );
+      if (ComplementView) {
+        complementArray.push(
+          <span
+            key={`comp-${index}`}
+            className={`DNAletter Complement ${base}`}
+            aria-label={`Complement of base ${index + 1}: ${getComplement(
+              base
+            )}`}
+          >
+            {getComplement(base)}
+          </span>
+        );
+      }
+    };
+
+    /**
      * Transforms the DNA sequence string into an array of JSX elements with appropriate formatting.
      *
      * @param {string} text - The DNA sequence string.
+     * @returns {JSX.Element[]} An array of JSX elements representing the formatted DNA sequence.
      */
     const transformDNAseqToHtml = (text: string): JSX.Element[] => {
       const newText: JSX.Element[] = [];
       let complementArray: JSX.Element[] = [];
-      let base: string;
-
-      /**
-       * Adds a DNA base and its complement (if enabled) to the respective arrays.
-       *
-       * @param {string} char - The DNA base character.
-       * @param {number} index
-       */
-      const addBase = (char: string, index: number): void => {
-        base = char.toUpperCase();
-        newText.push(
-          <span
-            key={`base-${index}`}
-            className="DNAletter"
-            aria-label={`Base ${index + 1}: ${base}`}
-          >
-            {base}
-          </span>
-        );
-        if (ComplementView) {
-          complementArray.push(
-            <span
-              key={`comp-${index}`}
-              className="DNAletter Complement"
-              aria-label={`Complement of base ${index + 1}: ${getComplement(
-                base
-              )}`}
-            >
-              {getComplement(base)}
-            </span>
-          );
-        }
-      };
 
       for (let i = 0; i < text.length; i++) {
         const char = text.charAt(i);
         if (TabbedView && i % 10 === 0 && i % 100 !== 0) {
           // Add tabbing to main sequence
           newText.push(
-            <span key={`tab-${i}`} className="tab" aria-hidden="true"></span>
+            <span key={`tab-${i}`} className={"tab"} aria-hidden="true"></span>
           );
-          addBase(char, i);
+          addBase(char, i, newText, complementArray);
 
           // Add tabbing to complement sequence
           if (ComplementView) {
             complementArray.push(
               <span
                 key={`comp-tab-${i}`}
-                className="tab"
+                className={"tab"}
                 aria-hidden="true"
               ></span>
             );
@@ -113,12 +120,12 @@ const Seq: React.FC<SeqProps> = React.memo(
             newText.push(<br key={`br-comp-${i}`} />);
             newText.push(<br key={`br-comp2-${i}`} />);
             complementArray = []; // Clear the array
-            addBase(char, i);
+            addBase(char, i, newText, complementArray);
           } else {
-            addBase(char, i);
+            addBase(char, i, newText, complementArray);
           }
         } else {
-          addBase(char, i);
+          addBase(char, i, newText, complementArray);
           if (i === text.length - 1) {
             newText.push(<br key={`end-br-${i}`} />);
             if (ComplementView) {
