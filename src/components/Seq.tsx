@@ -82,13 +82,19 @@ const Seq: React.FC<SeqProps> = React.memo(
         const char = text.charAt(i);
         if (TabbedView && i % 10 === 0 && i % 100 !== 0) {
           // Add tabbing to main sequence
-          newText.push(<span key={`tab-${i}`}>&nbsp;&nbsp;&nbsp;&nbsp;</span>);
+          newText.push(
+            <span key={`tab-${i}`} className="tab" aria-hidden="true"></span>
+          );
           addBase(char, i);
 
           // Add tabbing to complement sequence
           if (ComplementView) {
             complementArray.push(
-              <span key={`comp-tab-${i}`}>&nbsp;&nbsp;&nbsp;&nbsp;</span>
+              <span
+                key={`comp-tab-${i}`}
+                className="tab"
+                aria-hidden="true"
+              ></span>
             );
           }
         } else if (i % 100 === 0 && i !== 0) {
@@ -156,10 +162,15 @@ const Seq: React.FC<SeqProps> = React.memo(
       return rowHeader;
     };
 
+    const renderedSequence = React.useMemo(
+      () => transformDNAseqToHtml(DNAseq),
+      [DNAseq, TabbedView, ComplementView]
+    );
+
     return (
       <div>
         <span className="rowHeader">{generateRowHeader()}</span>
-        <span className="DNAseq">{transformDNAseqToHtml(DNAseq)}</span>
+        <span className="DNAseq">{renderedSequence}</span>
       </div>
     );
   }
