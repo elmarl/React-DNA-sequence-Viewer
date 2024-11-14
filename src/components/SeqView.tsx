@@ -1,4 +1,4 @@
-import React, { useState, useRef, ChangeEvent } from "react";
+import React, { useState, useRef, ChangeEvent, useCallback } from "react";
 import Seq from "./Seq";
 
 /**
@@ -31,35 +31,35 @@ const SeqView: React.FC = () => {
   /**
    * Adds a randomly generated DNA sequence to the state.
    */
-  const addRandomSeq = (): void => {
+  const addRandomSeq = useCallback((): void => {
     setDNAseqs((prevSeqs) => [...prevSeqs, makeId()]);
-  };
+  }, []);
 
   /**
    * Adds a requested DNA sequence to the state.
    *
    * @param {string} seq
    */
-  const addRequestedSeq = (seq: string): void => {
+  const addRequestedSeq = useCallback((seq: string): void => {
     setDNAseqs((prevSeqs) => [...prevSeqs, seq]);
-  };
+  }, []);
 
   /**
    * Removes a DNA sequence from the state based on its index.
    *
    * @param {number} index
    */
-  const removeSeq = (index: number): void => {
+  const removeSeq = useCallback((index: number): void => {
     setDNAseqs((prevSeqs) =>
       prevSeqs.filter((_, seqIndex) => seqIndex !== index)
     );
-  };
+  }, []);
 
   /**
    * Renders all DNA sequences with corresponding remove buttons.
    *
    */
-  const printSeqs = (): JSX.Element[] => {
+  const printSeqs = useCallback((): JSX.Element[] => {
     return DNAseqs.map((seq, index) => (
       <div key={`seq-container-${index}`} className="seq-container">
         <Seq
@@ -77,12 +77,12 @@ const SeqView: React.FC = () => {
         <br />
       </div>
     ));
-  };
+  }, [DNAseqs, ComplementView, TabbedView, removeSeq]);
 
   /**
    * Fetches a DNA sequence from the NCBI API based on the input sequence ID.
    */
-  const requestSeq = async (): Promise<void> => {
+  const requestSeq = useCallback(async (): Promise<void> => {
     const term = requestIDRef.current?.value.trim();
     if (!term) {
       setError("Please enter a valid sequence ID.");
@@ -139,25 +139,27 @@ const SeqView: React.FC = () => {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [addRequestedSeq]);
 
   /**
    * Handles changes to the TabbedView checkbox.
    */
-  const handleTabbedViewChange = (
-    event: ChangeEvent<HTMLInputElement>
-  ): void => {
-    setTabbedView(event.target.checked);
-  };
+  const handleTabbedViewChange = useCallback(
+    (event: ChangeEvent<HTMLInputElement>): void => {
+      setTabbedView(event.target.checked);
+    },
+    []
+  );
 
   /**
    * Handles changes to the ComplementView checkbox.
    */
-  const handleComplementViewChange = (
-    event: ChangeEvent<HTMLInputElement>
-  ): void => {
-    setComplementView(event.target.checked);
-  };
+  const handleComplementViewChange = useCallback(
+    (event: ChangeEvent<HTMLInputElement>): void => {
+      setComplementView(event.target.checked);
+    },
+    []
+  );
 
   return (
     <div>
@@ -181,7 +183,9 @@ const SeqView: React.FC = () => {
             ref={requestIDRef}
             aria-label="Sequence ID"
           />
-          <button onClick={requestSeq}>Load Seq</button>
+          <button onClick={requestSeq} aria-label="Load DNA sequence">
+            Load Seq
+          </button>
         </li>
         <li>
           <label htmlFor="tabbed-view-checkbox">Tab after 10 bases:</label>

@@ -55,13 +55,23 @@ const Seq: React.FC<SeqProps> = React.memo(
       const addBase = (char: string, index: number): void => {
         base = char.toUpperCase();
         newText.push(
-          <span key={`base-${index}`} className="DNAletter">
+          <span
+            key={`base-${index}`}
+            className="DNAletter"
+            aria-label={`Base ${index + 1}: ${base}`}
+          >
             {base}
           </span>
         );
         if (ComplementView) {
           complementArray.push(
-            <span key={`comp-${index}`} className="DNAletter Complement">
+            <span
+              key={`comp-${index}`}
+              className="DNAletter Complement"
+              aria-label={`Complement of base ${index + 1}: ${getComplement(
+                base
+              )}`}
+            >
               {getComplement(base)}
             </span>
           );
@@ -71,12 +81,29 @@ const Seq: React.FC<SeqProps> = React.memo(
       for (let i = 0; i < text.length; i++) {
         const char = text.charAt(i);
         if (TabbedView && i % 10 === 0 && i % 100 !== 0) {
+          // Add tabbing to main sequence
           newText.push(<span key={`tab-${i}`}>&nbsp;&nbsp;&nbsp;&nbsp;</span>);
           addBase(char, i);
+
+          // Add tabbing to complement sequence
+          if (ComplementView) {
+            complementArray.push(
+              <span key={`comp-tab-${i}`}>&nbsp;&nbsp;&nbsp;&nbsp;</span>
+            );
+          }
         } else if (i % 100 === 0 && i !== 0) {
+          // Add line break to main sequence
           newText.push(<br key={`br-${i}`} />);
           if (ComplementView) {
-            newText.push(<span key={`comp-line-${i}`}>{complementArray}</span>);
+            // Add complement sequence and line breaks
+            newText.push(
+              <span
+                key={`comp-line-${i}`}
+                aria-label={`Complement sequence line ${i / 100}`}
+              >
+                {complementArray}
+              </span>
+            );
             newText.push(<br key={`br-comp-${i}`} />);
             newText.push(<br key={`br-comp2-${i}`} />);
             complementArray = []; // Clear the array
@@ -90,7 +117,12 @@ const Seq: React.FC<SeqProps> = React.memo(
             newText.push(<br key={`end-br-${i}`} />);
             if (ComplementView) {
               newText.push(
-                <span key={`comp-end-${i}`}>{complementArray}</span>
+                <span
+                  key={`comp-end-${i}`}
+                  aria-label="Final complement sequence"
+                >
+                  {complementArray}
+                </span>
               );
             }
           }
@@ -109,7 +141,11 @@ const Seq: React.FC<SeqProps> = React.memo(
       const rowHeader: JSX.Element[] = [];
 
       for (let i = 0; i < rowCount; i++) {
-        rowHeader.push(<span key={`header-${i}`}>{i * 100 + 1}:&nbsp;</span>);
+        rowHeader.push(
+          <span key={`header-${i}`} aria-label={`Row ${i + 1}`}>
+            {i * 100 + 1}:&nbsp;
+          </span>
+        );
         rowHeader.push(<br key={`br-header-${i}`} />);
         if (ComplementView) {
           rowHeader.push(<br key={`br-header2-${i}`} />);
